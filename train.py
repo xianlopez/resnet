@@ -29,5 +29,4 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, update_fr
 model.fit(train_dataset, epochs=120, callbacks=[tensorboard_callback], workers=6, use_multiprocessing=True,
           validation_data=val_dataset)
 
-# TODO: Data augmentation
-# TODO: Validation
+# TODO: Variable learning rate

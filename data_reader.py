@@ -5,6 +5,8 @@ import tensorflow as tf
 import numpy as np
 from lxml import etree
 
+from data_augmentation import data_augmentation, pad_to_square
+
 
 def read_labels_dict(data_path):
     train_path = os.path.join(data_path, 'ILSVRC', 'Data', 'CLS-LOC', 'train')
@@ -62,6 +64,10 @@ def read_val_data(data_path, labels_dict):
 
 
 class DataReader(tf.keras.utils.Sequence):
+    image_means = np.array([123.0, 117.0, 104.0])
+    image_means /= 255.0
+    image_means = np.reshape(image_means, [1, 1, 3])
+
     def __init__(self, data_path, batch_size, img_size, split):
         self.labels_dict = read_labels_dict(data_path)
         if split == 'train':
@@ -74,6 +80,7 @@ class DataReader(tf.keras.utils.Sequence):
         random.shuffle(self.paths_and_labels)
         self.batch_size = batch_size
         self.img_size = img_size
+        self.do_data_aug = split == 'train'
 
     def __len__(self):
         return len(self.paths_and_labels) // self.batch_size
@@ -85,10 +92,13 @@ class DataReader(tf.keras.utils.Sequence):
             img_idx = batch_idx * self.batch_size + idx_in_batch
             img_path, label = self.paths_and_labels[img_idx]
             img = cv2.imread(img_path)
-            img = cv2.resize(img, (self.img_size, self.img_size))
             img = img.astype(np.float32) / 255.0
-            # TODO: data augmentation
-            # TODO: preprocessing
+            if self.do_data_aug:
+                img = data_augmentation(img)
+            else:
+                img = pad_to_square(img)
+                img = cv2.resize(img, (self.img_size, self.img_size))
+            img -= DataReader.image_means
             x[idx_in_batch, ...] = img
             assert label < self.nclasses
             labels_hotencoding[idx_in_batch, label] = 1
