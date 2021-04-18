@@ -95,4 +95,4 @@ class DataReader(tf.keras.utils.Sequence):
         return x, labels_hotencoding
 
     def on_epoch_end(self):
-        random.shuffle(self.image_paths)
+        random.shuffle(self.paths_and_labels)
