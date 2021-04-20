@@ -25,7 +25,8 @@ def resnet_block_simple(input_tensor, downsample, layer_idx, block_idx):
     x = layers.ReLU(name=base_name+'_relu2')(x)
 
     if downsample:
-        y = layers.Conv2D(num_outputs, 1, strides=2, padding='same', name=base_name+'_shortcut')(input_tensor)
+        y = layers.Conv2D(num_outputs, 1, strides=2, padding='same', use_bias=False,
+                          name=base_name+'_shortcut')(input_tensor)
         x = x + y
     else:
         x = x + input_tensor
@@ -60,7 +61,8 @@ def resnet_block_bottleneck(input_tensor, downsample, layer_idx, block_idx):
     x = layers.ReLU(name=base_name+'_relu1')(x)
 
     if downsample:
-        y = layers.Conv2D(num_outputs, 1, strides=2, padding='same', name=base_name+'_shortcut')(input_tensor)
+        y = layers.Conv2D(num_outputs, 1, strides=2, padding='same', use_bias=False,
+                          name=base_name+'_shortcut')(input_tensor)
         x = x + y
     else:
         x = x + input_tensor
@@ -90,6 +92,8 @@ def resnet18(img_size, nclasses):
     input_tensor = Input(shape=(img_size, img_size, 3))
     x = layers.Conv2D(64, 7, strides=2, padding='same', name='conv1',
                       kernel_regularizer=l2(l2=l2_reg), bias_regularizer=l2(l2=l2_reg))(input_tensor)
+    x = layers.BatchNormalization(name='layer1_bn')(x)
+    x = layers.ReLU(name='layer1_relu')(x)
     x = layers.MaxPool2D(name='layer2_pool')(x)
     x = resnet_layer_simple(x, 2, False, 2)
     x = resnet_layer_simple(x, 2, True, 3)
@@ -105,6 +109,8 @@ def resnet34(img_size, nclasses):
     input_tensor = Input(shape=(img_size, img_size, 3))
     x = layers.Conv2D(64, 7, strides=2, padding='same', name='conv1',
                       kernel_regularizer=l2(l2=l2_reg), bias_regularizer=l2(l2=l2_reg))(input_tensor)
+    x = layers.BatchNormalization(name='layer1_bn')(x)
+    x = layers.ReLU(name='layer1_relu')(x)
     x = layers.MaxPool2D(name='layer2_pool')(x)
     x = resnet_layer_simple(x, 2, False, 2)
     x = resnet_layer_simple(x, 2, True, 3)
@@ -120,6 +126,8 @@ def resnet50(img_size, nclasses):
     input_tensor = Input(shape=(img_size, img_size, 3))
     x = layers.Conv2D(64, 7, strides=2, padding='same', name='conv1',
                       kernel_regularizer=l2(l2=l2_reg), bias_regularizer=l2(l2=l2_reg))(input_tensor)
+    x = layers.BatchNormalization(name='layer1_bn')(x)
+    x = layers.ReLU(name='layer1_relu')(x)
     x = layers.MaxPool2D(name='layer2_pool')(x)
     x = resnet_layer_bottleneck(x, 3, False, 2)
     x = resnet_layer_bottleneck(x, 4, True, 3)
@@ -135,6 +143,8 @@ def resnet101(img_size, nclasses):
     input_tensor = Input(shape=(img_size, img_size, 3))
     x = layers.Conv2D(64, 7, strides=2, padding='same', name='conv1',
                       kernel_regularizer=l2(l2=l2_reg), bias_regularizer=l2(l2=l2_reg))(input_tensor)
+    x = layers.BatchNormalization(name='layer1_bn')(x)
+    x = layers.ReLU(name='layer1_relu')(x)
     x = layers.MaxPool2D(name='layer2_pool')(x)
     x = resnet_layer_bottleneck(x, 3, False, 2)
     x = resnet_layer_bottleneck(x, 4, True, 3)
@@ -150,6 +160,8 @@ def resnet152(img_size, nclasses):
     input_tensor = Input(shape=(img_size, img_size, 3))
     x = layers.Conv2D(64, 7, strides=2, padding='same', name='conv1',
                       kernel_regularizer=l2(l2=l2_reg), bias_regularizer=l2(l2=l2_reg))(input_tensor)
+    x = layers.BatchNormalization(name='layer1_bn')(x)
+    x = layers.ReLU(name='layer1_relu')(x)
     x = layers.MaxPool2D(name='layer2_pool')(x)
     x = resnet_layer_bottleneck(x, 3, False, 2)
     x = resnet_layer_bottleneck(x, 8, True, 3)
