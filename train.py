@@ -39,14 +39,23 @@ def train(opts):
 
     learning_rate = tf.keras.callbacks.LearningRateScheduler(lr_schedule)
 
-    log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'logs')
+    base_dir = os.path.dirname(os.path.realpath(__file__))
+    log_dir = os.path.join(base_dir, 'logs')
     if os.path.exists(log_dir):
         shutil.rmtree(log_dir)
     tensorboard_callback = LRTensorBoard(log_dir=log_dir, update_freq='batch')
 
+    checkpoint_path = os.path.join(base_dir, 'checkpoint', 'ckpt')
+    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+        filepath=checkpoint_path,
+        save_weights_only=True,
+        monitor='val_categorical_accuracy',
+        mode='max',
+        save_best_only=True)
+
     model.fit(train_dataset,
               epochs=opts.nepochs,
-              callbacks=[tensorboard_callback, learning_rate],
+              callbacks=[tensorboard_callback, learning_rate, checkpoint_callback],
               workers=opts.nworkers,
               use_multiprocessing=True,
               validation_data=val_dataset)
