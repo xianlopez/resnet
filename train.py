@@ -56,10 +56,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train a network')
     parser.add_argument('--data_path', type=str, default='/home/xian/ImageNet', help='path to ImageNet data')
     parser.add_argument('--batch_size', type=int, default=256)
-    parser.add_argument('--nepochs', type=int, default=120, help='number of epochs to train')
+    parser.add_argument('--nepochs', type=int, default=100, help='number of epochs to train')
     parser.add_argument('--initial_lr', type=float, default=0.1, help='initial learning rate')
     parser.add_argument('--lr_drop', type=float, default=0.5, help='Drop factor for the learning rate')
-    parser.add_argument('--lr_epochs_drop', type=int, default=10, help='Drop learning rate every this number of epochs')
+    parser.add_argument('--lr_epochs_drop', type=int, default=8, help='Drop learning rate every this number of epochs')
     parser.add_argument('--nworkers', type=int, default=6, help='number of processes to read data')
     args = parser.parse_args()
 
