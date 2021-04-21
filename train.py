@@ -33,6 +33,10 @@ def train(opts):
         optimizer=tf.optimizers.SGD(learning_rate=opts.initial_lr, momentum=0.9),
         metrics=[tf.keras.metrics.CategoricalAccuracy()])
 
+    if args.ckpt_path != '':
+        read_result = model.load_weights(opts.ckpt_path)
+        read_result.assert_existing_objects_matched()
+
     def lr_schedule(epoch):
         lrate = opts.initial_lr * np.power(opts.lr_drop, np.floor((1 + epoch) / opts.lr_epochs_drop))
         return lrate
@@ -70,6 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr_drop', type=float, default=0.5, help='Drop factor for the learning rate')
     parser.add_argument('--lr_epochs_drop', type=int, default=8, help='Drop learning rate every this number of epochs')
     parser.add_argument('--nworkers', type=int, default=6, help='number of processes to read data')
+    parser.add_argument('--ckpt_path', type=str, default='')
     args = parser.parse_args()
 
     train(args)
